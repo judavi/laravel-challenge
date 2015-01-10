@@ -7,3 +7,7 @@ composer.lock
 .env.php
 .DS_Store
 Thumbs.db
+
+_ide_helper.php
+
+app/config/packages/barryvdh/laravel-debugbar/config.php
