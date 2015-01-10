@@ -4,28 +4,33 @@ use Illuminate\Http\Request as Input;
 
 abstract class BaseManager {
 
-    protected $entity;
+    protected $model;
     protected $data;
     protected $input;
+    protected $entryRepository;
+    protected $usersRepository;
 
     abstract public function getRules();
-    function __construct(ModelInterface $entity, Input $input)
+
+    function __construct(ModelInterface $model, Input $input)
     {
-        $this->entity = $entity;
-        $this->setData($input->all());
-        $this->input;
+        $this->model = $model;
+        $this->data = $this->setData($input->all());
+        $this->input = $input;
+        $this->usersRepository = new UsersRepository();
+        $this->entryRepository = new EntriesRepository();
     }
 
     public function save()
     {
         $this->isValid();
-        $this->entity->fill($this->data);
-        $this->entity->save();
+        $this->model->fill($this->data);
+        $this->model->save();
 
         return true;
     }
 
-    public function isValid()
+    protected function isValid()
     {
         $validation = \Validator::make($this->data, $this->getRules());
 
@@ -38,16 +43,16 @@ abstract class BaseManager {
 
     protected function setData(Array $data)
     {
-        $this->data = array_only($data, array_keys($this->getRules()));
+        return array_only($data, array_keys($this->getRules()));
     }
 
 
     /**
      * @return mixed
      */
-    public function getEntity()
+    public function getModel()
     {
-        return $this->entity;
+        return $this->model;
     }
 
 } 
