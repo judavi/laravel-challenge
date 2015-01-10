@@ -27,7 +27,7 @@ class User extends BaseModel implements UserInterface, RemindableInterface, Mode
 	 *
 	 * @var array
      */
-	protected $fillable = ['username', 'email', 'password', 'twitter_account'];
+	protected $fillable = ['username', 'email', 'password', 'twitter_account', 'slug'];
 
 	/**
 	 * The attributes excluded from the model's JSON form.
@@ -35,5 +35,15 @@ class User extends BaseModel implements UserInterface, RemindableInterface, Mode
 	 * @var array
 	 */
 	protected $hidden = array('password', 'remember_token');
+
+	public function setPasswordAttribute($password){
+		$this->attributes['password'] = \Hash::make($password);
+	}
+
+
+	//Relationships
+	public function entries(){
+		return $this->hasMany('Entry', 'author_id');
+	}
 
 }
