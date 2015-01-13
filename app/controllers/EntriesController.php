@@ -10,17 +10,6 @@ class EntriesController extends \BaseController {
 	}
 
 	/**
-	 * Display a listing of the resource.
-	 * GET /entries
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-		//
-	}
-
-	/**
 	 * Show the form for creating a new resource.
 	 * GET /entries/create
 	 *
@@ -38,23 +27,27 @@ class EntriesController extends \BaseController {
 	 * @return Response
 	 */
 	public function store()
+
 	{
 		$manager = new CreateEntryManager(new Entry(), Input::instance());
 		$manager->save();
+
+
+		return Redirect::route('entries.show', [$manager->getModel()->slug]);
 	}
 
 	/**
 	 * Display the specified resource.
-	 * GET /entries/{id}
+	 * GET /entries/{slug}
 	 *
-	 * @param  int  $id
+	 * @param  string  $slug
 	 * @return Response
 	 */
 	public function show($slug)
 	{
-		$entry = $this->entriesRepository->findByTitle($slug);
+		$entry = Entry::where('slug','=',$slug)->first();
 
-		return View::make('entries.show', compact([$entry]));
+		return View::make('entries.show', compact(['entry']));
 	}
 
 	/**
@@ -66,9 +59,11 @@ class EntriesController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		$entry = $this->entriesRepository->findByTitle($id);
 
-		return View::make('entries.edit', compact([$entry]));
+
+		$entry = Entry::findOrFail($id);
+
+		return View::make('entries.edit', compact(['entry']));
 	}
 
 	/**
@@ -80,8 +75,10 @@ class EntriesController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		$manager = new CreateEntryManager($this->entriesRepository->find($id), Input::instance());
+		$manager = new UpdateEntryManager(Entry::find($id), Input::instance());
 		$manager->save();
+
+		return Redirect::route('entries.show', [$manager->getModel()->slug]);
 	}
 
 	/**
@@ -93,8 +90,10 @@ class EntriesController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
+		$entry = Entry::find($id);
 		Entry::destroy($id);
 
+		return Redirect::route('users.show', [$entry->author->slug]);
 	}
 
 }

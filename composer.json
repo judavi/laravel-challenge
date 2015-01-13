@@ -10,16 +10,17 @@
 		"barryvdh/laravel-debugbar": "1.8.5"
 	},
 	"require": {
-		"laravel/framework": "4.2.*"
+		"laravel/framework": "4.2.*",
+		"thujohn/twitter": "dev-master"
 	},
 	"autoload": {
 		"classmap": [
 			"app/commands",
 			"app/controllers",
 			"app/models",
-			"app/repositories",
-			"app/managers",
 			"app/components",
+			"app/managers",
+			"app/repositories",
 			"app/exceptions",
 			"app/database/migrations",
 			"app/database/seeds",

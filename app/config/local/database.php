@@ -42,8 +42,14 @@ return array(
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
-            //'port'		=> '33060'
         ),
+
+        'sqlite' => array(
+            'driver'   => 'sqlite',
+            'database' => __DIR__.'/../../database/local.sqlite',
+            'prefix'   => '',
+        ),
+
 
     ),
 

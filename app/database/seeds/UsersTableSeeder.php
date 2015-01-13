@@ -17,6 +17,7 @@ class UsersTableSeeder extends Seeder {
 				'username' => $user_name,
 				'email' => $faker->email,
 				'password' => 123456,
+				'slug' => Str::slug($user_name),
 				'twitter_account' => $user_name,
 			]);
 		}

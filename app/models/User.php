@@ -11,39 +11,58 @@ use Illuminate\Auth\Reminders\RemindableInterface;
  *
  * Class User
  */
-class User extends BaseModel implements UserInterface, RemindableInterface, ModelInterface {
+class User extends BaseModel implements ModelInterface, UserInterface, RemindableInterface {
 
-	use UserTrait, RemindableTrait;
+    use UserTrait, RemindableTrait;
 
-	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
-	 */
-	protected $table = 'users';
-
-	/**
-	 * The fillable attributes for users
-	 *
-	 * @var array
+    /**
+     * The database table used by the model.
+     *
+     * @var string
      */
-	protected $fillable = ['username', 'email', 'password', 'twitter_account', 'slug'];
+    protected $table = 'users';
 
-	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
-	 */
-	protected $hidden = array('password', 'remember_token');
+    /**
+     * The fillable attributes for users
+     *
+     * @var array
+     */
+    protected $fillable = ['username', 'email', 'password', 'twitter_account', 'slug'];
 
-	public function setPasswordAttribute($password){
-		$this->attributes['password'] = \Hash::make($password);
-	}
+    /**
+     * The attributes excluded from the model's JSON form.
+     *
+     * @var array
+     */
+    protected $hidden = array('password', 'remember_token');
 
 
-	//Relationships
-	public function entries(){
-		return $this->hasMany('Entry', 'author_id');
-	}
+    public function setPasswordAttribute($password)
+    {
+        $this->attributes['password'] = \Hash::make($password);
+    }
+
+
+    //Relationships
+    public function entries()
+    {
+        return $this->hasMany('Entry', 'author_id');
+    }
+
+    //Auth Stuff
+    public function getRememberToken()
+    {
+        return $this->remember_token;
+    }
+
+    public function setRememberToken($value)
+    {
+        $this->remember_token = $value;
+    }
+
+    public function getRememberTokenName()
+    {
+        return 'remember_token';
+    }
 
 }

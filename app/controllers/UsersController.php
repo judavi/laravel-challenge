@@ -3,34 +3,16 @@
 class UsersController extends \BaseController {
 
     protected $usersRepository;
-    protected $createUserManager;
-    protected $updateUserManager;
-    protected $updateUserPasswordManager;
+    protected $entriesRepository;
 
     function __construct(
         UsersRepository $usersRepository,
-        CreateUserManager $createUserManager,
-        UpdateUserManager $updateUserManager,
-        UpdateUserPaswordManager $updateUserPasswordManager
-
+        EntriesRepository $entriesRepository
     )
     {
         $this->usersRepository = $usersRepository;
-        $this->createUserManager = $createUserManager;
-        $this->updateUserManager = $updateUserManager;
-        $this->updateUserPasswordManager = $updateUserPasswordManager;
-    }
-
-    /**
-     * Display a listing of the User.
-     * GET /users
-     *
-     * @return Response
-     */
-    public function index()
-    {
-        //
-    }
+        $this->entriesRepository = $entriesRepository;
+        }
 
     /**
      * Show the form for creating a new User.
@@ -38,9 +20,9 @@ class UsersController extends \BaseController {
      *
      * @return Response
      */
-    public function create()
+    public function register()
     {
-        //
+        return View::make('users.create');
     }
 
     /**
@@ -49,22 +31,32 @@ class UsersController extends \BaseController {
      *
      * @return Response
      */
-    public function store()
+    public function signUp()
     {
-        //
+        $manager = new RegisterUserManager(new User(), Input::instance());
+
+        $manager->save();
+
+        Auth::loginUsingId($manager->getModel()->id);
+
+        return Redirect::route('users.show', [$manager->getModel()->slug]);
     }
+
 
     /**
      * Display the specified User.
-     * GET /users/{id}
+     * GET /users/{slug}
      *
-     * @param  int $id
+     * @param  string $slug
      * @return Response
      */
-    public function show($id)
+    public function show($slug)
     {
-        $user = $this->use
-	}
+        $user = $this->usersRepository->findByUserName($slug);
+        $entries = $this->entriesRepository->getAllByAuthor($user->id);
+
+        return View::make('users.show', compact(['user', 'entries']));
+    }
 
     /**
      * Show the form for editing the specified User.
@@ -75,7 +67,9 @@ class UsersController extends \BaseController {
      */
     public function edit($id)
     {
-        //
+        $user = $this->usersRepository->find($id);
+
+        return View::make('users.edit', compact('user'));
     }
 
     /**
@@ -83,11 +77,34 @@ class UsersController extends \BaseController {
      * PUT /users/{id}
      *
      * @param  int $id
-     * @return Response
+     * @return Redirect
      */
     public function update($id)
     {
-        //
+        if(Request::ajax()){
+            $user = $this->usersRepository->find($id);
+            $manager = new UpdateUserManager($user, Input::instance());
+            $manager->save();
+
+            $notification = 'Success, user information update';
+
+            return $this->sendJsonResponse(true, $notification, URL::route('users.show', [$manager->getModel()->slug]));
+        }
+    }
+
+    public function updatePassword($id)
+    {
+        if(Request::ajax()) {
+
+            $user = $this->usersRepository->find($id);
+
+            $manager = new UpdateUserPasswordManager($user, Input::instance());
+            $manager->save();
+
+            $notification = 'Success, password changed';
+
+            return $this->sendJsonResponse(true, $notification, URL::route('users.show', [$manager->getModel()->slug]));
+        }
     }
 
     /**
@@ -99,7 +116,15 @@ class UsersController extends \BaseController {
      */
     public function destroy($id)
     {
-        //
+        User::destroy($id);
+
+        return Redirect::route('index');
     }
+
+    public function twitterTimeline($twitter_account){
+        return Twitter::getUserTimeline(array('screen_name' => $twitter_account, 'count' => 5, 'format' => 'json'));
+
+    }
+
 
 }

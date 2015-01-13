@@ -1,7 +1,5 @@
 <?php
-
 class UsersRepository extends BaseRepository implements RepositoryInterface {
-
     /**
      * @return Eloquent
      */
@@ -9,17 +7,21 @@ class UsersRepository extends BaseRepository implements RepositoryInterface {
     {
         return new User();
     }
-
     public function allUsersId(){
         return $this->model
             ->select('id')
             ->get();
     }
-
     public function findByUserName($slug){
-        $this->model
+        $user = $this->model
             ->with(['entries'])
             ->where('slug', '=', $slug)
             ->first();
+        if(is_null($user)){
+            throw new ResourceException('What you are looking for does not exist', 404);
+
+        }else{
+            return $user;
+        }
     }
 }

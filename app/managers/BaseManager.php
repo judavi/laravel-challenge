@@ -17,8 +17,7 @@ abstract class BaseManager {
         $this->model = $model;
         $this->data = $this->setData($input->all());
         $this->input = $input;
-        $this->usersRepository = new UsersRepository();
-        $this->entryRepository = new EntriesRepository();
+
     }
 
     public function save()

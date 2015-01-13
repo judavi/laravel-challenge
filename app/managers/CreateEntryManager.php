@@ -5,9 +5,10 @@ class CreateEntryManager extends BaseManager implements ManagerInterface {
     public function getRules()
     {
         return [
-            'title' => 'required',
-            'content' => '',
+            'title'     => 'required',
+            'content'   => '',
             'author_id' => 'required|integer',
+            'slug'      => 'required'
         ];
     }
 
@@ -21,14 +22,13 @@ class CreateEntryManager extends BaseManager implements ManagerInterface {
         return true;
     }
 
-    protected function isValidSlug(){
-        $slugs = $this->entryRepository->getNumberOfSlugs($this->data['slug']);
-
-        if($slugs > 0 ){
+    protected function isValidSlug()
+    {
+        $slugs = Entry::where('slug','=',$this->data['slug'])->first();
+        if ( $slugs > 0 ) {
             return;
-        }else{
-            $this->data['slug'] = $this->data['slug'].$slugs;
+        } else {
+            $this->data['slug'] = $this->data['slug'] . $slugs;
         }
     }
-
 }

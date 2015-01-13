@@ -3,9 +3,5 @@
  * Created by PhpStorm.
  * User: perseus
  * Date: 10/01/15
- * Time: 1:14 AM
+ * Time: 12:01 PM
  */
-
-class UpdateUserPaswordManager {
-
-}

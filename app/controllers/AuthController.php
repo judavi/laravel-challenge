@@ -1,7 +1,6 @@
 <?php
 
-class AuthController extends \BaseController
-{
+class AuthController extends \BaseController {
 
     public function auth()
     {
@@ -13,18 +12,23 @@ class AuthController extends \BaseController
         );
 
 
-        if (Auth::attempt($credentials)) {
-            return Redirect::route('users.show');
+        if ( Auth::attempt($credentials) ) {
+            return Redirect::route('users.show', Auth::user()->slug);
         } else {
             return Redirect::back()->with('login_error', 1);
         }
     }
 
+    public function signIn()
+    {
+        return View::make('auth.signin');
+    }
+
     public function logout()
     {
         Auth::logout();
-        return Redirect::route('login');
+
+        return Redirect::route('index');
 
     }
-
-} 
+}

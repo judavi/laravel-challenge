@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration {
 			$table->string('password')->unique();
 			$table->string('twitter_account')->unique();
 			$table->string('slug')->unique();
+			$table->text('remember_token');
 
 			$table->timestamps();
 		});

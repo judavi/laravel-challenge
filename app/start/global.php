@@ -79,3 +79,75 @@ App::down(function()
 */
 
 require app_path().'/filters.php';
+
+
+/*
+ * Custom validation exception
+ */
+
+App::error(function (ValidationException $exception, $code) {
+	if (Request::ajax()) {
+		return Response::json(array(
+			'success' => false,
+			'errors' => $exception->getErrors(),
+		));
+	}
+	return Redirect::back()->withInput()->withErrors($exception->getErrors());
+});
+
+
+/*
+ | Custom not found Resource
+ |
+ */
+
+
+
+App::error(function($exception, $code){
+	if ($code == 404){
+		$url = Request::url();
+		return Response::view(
+			'errors/404',
+			array(
+				'message' => "We do not know what are you looking for but, $url is not valid in this site."
+			),
+			404
+		);
+	}
+});
+
+App::error(function(InvalidPasswordException $exception){
+	if (Request::ajax()) {
+			//dd($exception->getMessage());
+		return Response::json(array(
+			'success' => false,
+			'errors' => ['error_message' =>[$exception->getMessage()]]
+				,
+		));
+	}
+	return Redirect::back()->withInput()->withErrors($exception->getMessage());
+});
+
+App::error(function (ResourceException $exception, $code) {
+
+	$code = $exception->getCode();
+	$pathInfo = Request::getPathInfo();
+	$message = $exception->getMessage() ?: 'Exception';
+	//dd($exception->getMessage());
+	//Log::error("$code - $message @ $pathInfo\r\n$exception");
+
+	switch ($code) {
+		case 403:
+			return Response::view('errors/403', array('message' => $exception->getMessage()), 403);
+			break;
+		case 500:
+			return Response::view('errors/500', array(), 500);
+			break;
+		case 404:
+			//dd('hola');
+			return Response::view('errors/404', array('message' => $exception->getMessage()), 404);
+			break;
+		default:
+			return Response::view('errors/404', array(), $exception->getCode());
+	}
+});

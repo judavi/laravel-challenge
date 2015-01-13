@@ -16,7 +16,7 @@ abstract class BaseModel extends Eloquent {
      *
      * @var string
      */
-    protected $publicDateFormat = 'd F Y H:i';
+    protected $publicDateFormat = 'd F Y';
 
     /**
      * The Server date format predefine by laravel
@@ -36,8 +36,6 @@ abstract class BaseModel extends Eloquent {
      */
     public function getCreatedAtAttribute($created_at)
     {
-        $this->setLocale();
-
         return $this->isDateZero($created_at) ? "" : Carbon::createFromFormat($this->serverDateFormat, $created_at)->format($this->publicDateFormat);
     }
 
@@ -52,8 +50,6 @@ abstract class BaseModel extends Eloquent {
      */
     public function getUpdatedAtAttribute($updated_at)
     {
-        $this->setLocale();
-
         return $this->isDateZero($updated_at) ? "" : Carbon::createFromFormat($this->serverDateFormat, $updated_at)->format($this->publicDateFormat);
     }
 
